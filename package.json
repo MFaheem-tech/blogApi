@@ -1,0 +1,18 @@
+{
+  "name": "expressblogapi",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "This is used for Blog Api",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "Faheem",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1",
+    "mongoose": "^6.5.1",
+    "nodemon": "^2.0.19"
+  }
+}
