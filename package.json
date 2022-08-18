@@ -1,7 +1,6 @@
 {
   "name": "expressblogapi",
   "version": "1.0.0",
-  "type": "module",
   "description": "This is used for Blog Api",
   "main": "server.js",
   "scripts": {
@@ -11,7 +10,10 @@
   "author": "Faheem",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
     "express": "^4.18.1",
+    "express-session": "^1.17.3",
     "mongoose": "^6.5.1",
     "nodemon": "^2.0.19"
   }

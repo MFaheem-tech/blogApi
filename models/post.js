@@ -1,13 +1,9 @@
-import mongoose  from "mongoose";
+const mongoose = require ("mongoose");
 
 
 
  const postSchema = new mongoose.Schema({
-    // _id:  {
-    //     type: 'ObjectId',
-    //     required: true
-    // },
-    
+ 
     title: {
         type: 'String',
         required: true
@@ -26,5 +22,4 @@ import mongoose  from "mongoose";
         ref: 'Comment'
       }]
  });
- const Post= mongoose.model('Post', postSchema); 
- export default Post;
+ module.exports = mongoose.model("Post", postSchema); 

@@ -1,11 +1,11 @@
-import Post  from "../models/post.js";
-import Comment from "../models/comment.js";
+const Post = require("../models/post.js");
+const Comment = require("../models/comment.js");
+const { Router } = require ("express");
+const bcrypt = require("bcrypt");
 
+const router= new Router();
 
-
-const PostController = {};
-
-PostController.getAll = async (req, res) =>{
+router.get('/all', async (req, res) =>{
     try {
         const allBlogs= await Post.find();
         res.send(allBlogs);
@@ -14,8 +14,9 @@ PostController.getAll = async (req, res) =>{
     
     }
 }
+);
 
-PostController.getPost = async (req, res)=> {
+router.get('/:id', async (req, res) =>{
     try {
         const id = req.params.id;
         const rest = await Post.findById(id);
@@ -26,9 +27,9 @@ PostController.getPost = async (req, res)=> {
      {
        }
     }
+);
 
-
-PostController.addPost = async (req, res) => {
+router.post('/create', async (req, res) =>{
     try { 
             
     const newPost= await Post.create(req.body);
@@ -42,9 +43,9 @@ PostController.addPost = async (req, res) => {
      console.log(err);  
     }
 }
+);
 
-
-PostController.updatePost = async(req, res) => {
+router.put('/:id', async (req, res) =>{
     try {
         
         const updatePost = await Post.findOneAndUpdate(req.params.id);
@@ -59,8 +60,8 @@ PostController.updatePost = async(req, res) => {
     catch (error) {
         
     }
-}
- PostController.deletePost = async (req, res) => {
+});
+router.delete('/:id', async (req, res) =>{
     try {
        const removePost = await Post.findByIdAndDelete(req.params.id)
            res.json(removePost);
@@ -70,38 +71,16 @@ PostController.updatePost = async(req, res) => {
         
     }
  }
+);
 
-//  PostController.addPost = async (req, res) => {
-
-//    let comment = new comment({
-//     auther: 'faheem',
-//     description: req.body.description,
-//     post: Post._id
-//   });
-//    comment.save((err, result) => {
-//     if (err){
-//         console.log(err);
-//     } else{
-//         Post.findById(req.params.id, (err, post) => {
-//      if (err)  {
-//         console.log(err);
-//      }
-//       post.comments.push(result);
-//         post.save();
-//         console.log(post.comments);
-//          res.send(comment);
-    
-//      });
-//     }
-//         });
-//     }
-
-    PostController.addComment = async (req, res) => {
+router.post('/post/:id/comment', async (req, res) =>{
         try {
             const comment = new Comment({auther:req.body.auther, description:req.body.description,});
             await comment.save();
-            await Post.findOneAndUpdate({_id:req.body._id}, {$push: {comment}});
-             res.send("Comment was added successfully");
+            const postRelated = await Post.find({_id:req.body._id});
+            postRelated.comments instanceof Array ? postRelated.comments.unshift(comment) : postRelated.comments = [comment];
+           //await postRelated.save();
+             res.status(200).send("Comment was added successfully");
         
         } catch (error) 
          {
@@ -109,5 +88,7 @@ PostController.updatePost = async(req, res) => {
             
         }
      }
- 
-  export default PostController;
+);
+
+
+module.exports= router;
