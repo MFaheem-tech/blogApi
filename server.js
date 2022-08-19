@@ -1,8 +1,7 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const Router = require("express");
-const session = require("express-session");
+
 const app = express();
 
 const authRoute = require("./routes/auth.js");
@@ -11,20 +10,6 @@ const postRoute = require("./routes/post.js");
 // import connectDb  from './db/connect.js';
 
 app.use(express.json());
-app.use(cookieParser());
-app.use(
-  session({
-    name: "session-id",
-    secret: "secret",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      expires: 600000,
-      sameSite: false,
-      secure: false,
-    },
-  })
-);
 
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
@@ -42,9 +27,6 @@ mongoose
   .catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
-  req.session.isAuth = true;
-  console.log(req.session);
-  console.log(req.session.id);
   res.send("Hello World!");
 });
 
