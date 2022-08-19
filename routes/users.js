@@ -1,32 +1,32 @@
 const { Router } = require("express");
-
-const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { config } = require("dotenv");
+const User = require("../models/user");
 
 const router = new Router();
-
+config();
 //update user
 
-router.put("/:id", async (req, res) => {
-  if (req.body.id === req.params.id) {
-    if (req.body.password) {
-      const salt = await bcrypt.genSalt(10);
-      req.body.password = await bcrypt.hash(req.body.password, salt);
-    }
-    try {
+router.put("/", async (req, res) => {
+  if (!req.session.jwt) {
+    return res.status(401).json({ error: "un athorized" });
+  }
+  try {
+    const userDecoded = await jwt.verify(req.session.jwt, process.env.JWT);
+    if (userDecoded) {
+      req.body.password = await bcrypt.hash(req.body.password, 10);
       const updatedUser = await User.findByIdAndUpdate(
-        req.params.id,
+        userDecoded._id,
         {
           $set: req.body,
         },
         { new: true }
       );
       res.status(200).json(updatedUser);
-    } catch (error) {
-      res.status(500).json(error);
     }
-  } else {
-    res.status(401).json(" you can update only your account!");
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 //delete user
@@ -44,14 +44,30 @@ router.delete("/:id", async (req, res) => {
   }
 });
 // get user
-router.get("/:id", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    if (!req.session) {
+      return res.status(401).json({ error: "un athorized" });
+    }
+    const userDecoded = req.session.jwt
+      ? jwt.verify(req.session.jwt, process.env.JWT)
+      : "";
+
+    const user = await User.findById(userDecoded._id);
+    if (!user) {
+      return res.status(400).json({ error: "account not found" });
+    }
     const { password, ...others } = user._doc;
     res.status(200).json(others);
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ error: error.message });
   }
+});
+router.get("/logout", async (req, res) => {
+  console.log("hey logout");
+  req.session = null;
+  return res.status(200).json({ msg: "logged out" });
 });
 
 module.exports = router;

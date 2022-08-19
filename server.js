@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Router = require("express");
+const cookieSession = require("cookie-session");
 
 const app = express();
 
@@ -10,6 +11,16 @@ const postRoute = require("./routes/post.js");
 // import connectDb  from './db/connect.js';
 
 app.use(express.json());
+app.set("trust proxy", 1); // trust first proxy
+
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["key1"],
+
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  })
+);
 
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
