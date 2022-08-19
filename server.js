@@ -40,13 +40,7 @@ mongoose
   )
   .then(() => console.log("Connection successful"))
   .catch((err) => console.log(err));
-app.get("/isAuth", async (req, res) => {
-  if (req.session.user) {
-    return res.json(req.session.user);
-  } else {
-    return res.status(401).json("unauthorize");
-  }
-});
+
 app.get("/", (req, res) => {
   req.session.isAuth = true;
   console.log(req.session);

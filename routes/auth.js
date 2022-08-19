@@ -2,7 +2,6 @@ const { Router } = require("express");
 
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
-const session = require("express-session");
 
 const router = new Router();
 
@@ -31,9 +30,7 @@ router.post("/login", async (req, res) => {
     if (!validated) {
       res.status(400).json("Wrong credentials");
     }
-    // session = req.session;
-    // session.user_id = req.body.username;
-    // console.log(req.session);
+
     const { password, ...others } = user._doc;
     res.status(200).json(others);
   } catch (err) {
